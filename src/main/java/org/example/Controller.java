@@ -1,13 +1,10 @@
 package org.example;
 
-import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.shape.Rectangle;
 
 public class Controller {
-
     @FXML
-    // Getting the numbers and the MESH from Tetris
     public static final int MOVE = Tetris.MOVE;
     public static final int SIZE = Tetris.SIZE;
     public static int XMAX = Tetris.XMAX;

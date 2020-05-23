@@ -1,5 +1,6 @@
 package org.example;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Timer;
@@ -7,6 +8,7 @@ import java.util.TimerTask;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
@@ -17,13 +19,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 /**
  * JavaFX App
  */
 public class Tetris extends Application {
-    // The variables
+
     public static final int MOVE = 25;
     public static final int SIZE = 25;
     public static int XMAX = SIZE * 12;
@@ -37,6 +37,10 @@ public class Tetris extends Application {
     private static boolean game = true;
     private static Form nextObj = Controller.makeRect();
     private static int linesNo = 0;
+
+    private static Group root = new Group();
+    private static Scene GameOver = new Scene(root, 300, 300, Color.BEIGE);
+
 
     public static void main(String[] args) {
         launch(args);
@@ -81,7 +85,6 @@ public class Tetris extends Application {
                             top = 0;
 
                         if (top == 2) {
-                            // GAME OVER
                             Text over = new Text("GAME OVER");
                             over.setFill(Color.RED);
                             over.setStyle("-fx-font: 70 arial;");
@@ -89,8 +92,44 @@ public class Tetris extends Application {
                             over.setX(10);
                             group.getChildren().add(over);
                             game = false;
+                            //reading and writing to score.txt
+                            try {
+                                FileWriter myWriter = new FileWriter("scores.txt",true);
+                                BufferedWriter bw=new BufferedWriter(myWriter);
+                                bw.write(Integer.toString(score));
+                                bw.newLine();
+                                bw.close();
+                                myWriter.close();
+                                FileReader reader = new FileReader("scores.txt");
+                                BufferedReader bufferedReader = new BufferedReader(reader);
+                                String line,last = null;
+                                while ((line = bufferedReader.readLine()) != null) {
+                                    last=line;
+                                }
+
+                                stage.setScene(GameOver);
+                                stage.setTitle("Game is over");
+                                Text gameover = new Text("Game is over");
+                                Text scores = new Text("Your score: "+last);
+                                reader.close();
+                                gameover.setFill(Color.BLACK);
+                                scores.setFill(Color.BLACK);
+                                gameover.setStyle("-fx-font: 30 arial;");
+                                scores.setStyle("-fx-font: 20 arial;");
+                                gameover.setY(50);
+                                scores.setY(90);
+                                gameover.setX(0);
+                                scores.setX(0);
+                                root.getChildren().addAll(gameover,scores);
+                                stage.show();
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            
+
                         }
-                        // Exit
+
                         if (top == 15) {
                             System.exit(0);
                         }
